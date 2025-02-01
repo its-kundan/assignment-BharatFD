@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  app:
+    build: .  # Build the Node.js app using the Dockerfile
+    ports:
+      - "8000:8000"  # Map port 8000 on the host to port 8000 in the container
+    depends_on:
+      - mongo  # Ensure MongoDB starts before the app
+      - redis  # Ensure Redis starts before the app
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/faqdb  # MongoDB connection string
+      - REDIS_URL=redis://redis:6379  # Redis connection string
+
+  mongo:
+    image: mongo:latest  # Use the official MongoDB image
+    ports:
+      - "27017:27017"  # Map port 27017 on the host to port 27017 in the container
+    volumes:
+      - mongo-data:/data/db  # Persist MongoDB data
+
+  redis:
+    image: redis:latest  # Use the official Redis image
+    ports:
+      - "6379:6379"  # Map port 6379 on the host to port 6379 in the container
+    volumes:
+      - redis-data:/data  # Persist Redis data
+
+volumes:
+  mongo-data:  # Named volume for MongoDB data
+  redis-data:  # Named volume for Redis data
